@@ -73,8 +73,8 @@ class Map(QMainWindow):
             json_response = response.json()
             toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             toponym_coodrinates = toponym["Point"]["pos"].split()
-            print(toponym_coodrinates)
             self.coordinates = toponym_coodrinates
+        self.update()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
