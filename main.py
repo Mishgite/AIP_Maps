@@ -27,6 +27,7 @@ class Map(QMainWindow):
         super().__init__()
         self.setGeometry(300, 300, 600, 450)
         self.setWindowTitle('Карта')
+        self.z = 15
 
         self.label = QLabel(self)
         self.label.resize(600, 450)
