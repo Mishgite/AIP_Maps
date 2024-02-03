@@ -3,6 +3,7 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from map_scale_utils import get_scale_params
 import requests
+import pprint
 import os
 
 
@@ -32,6 +33,7 @@ class Map(QMainWindow):
         self.l = 'map'
         self.pt = None
         self.degr = 0.005
+        self.postcode = ''
         self.coordinates = ['37.541776', '55.706857']
 
         self.label = QLabel(self)
@@ -62,20 +64,21 @@ class Map(QMainWindow):
         self.label1.resize(590, 10)
 
         self.label2 = QLabel(self)
-        self.label2.setText("приписывание почтового индекса")
-        self.label2.move(10, 40)
+        self.label2.setText("Почтовый индекс")
+        self.label2.move(10, 50)
         self.label2.resize(590, 10)
 
         self.text = QRadioButton('Вкл', self)
         self.text.setChecked(True)
-        self.text.move(10, 50)
+        self.text.move(10, 60)
 
         self.text1 = QRadioButton('Выкл', self)
-        self.text1.move(10, 70)
+        self.text1.move(10, 80)
 
         self.color_group_1 = QButtonGroup(self)
         self.color_group_1.addButton(self.text)
         self.color_group_1.addButton(self.text1)
+        self.color_group_1.buttonClicked.connect(self.change_lbl)
 
         self.label.setFocus()
 
@@ -86,10 +89,19 @@ class Map(QMainWindow):
         os.remove(file)
         self.label.setPixmap(pixmap)
 
+    def change_lbl(self, button: QRadioButton):
+        if self.postcode:
+            if button.text() == 'Вкл':
+                self.label1.setText(self.label1.text() + f', {self.postcode}')
+            else:
+                text = self.label1.text()
+                self.label1.setText(text[:text.rfind(',')])
+
     def clear_pos(self):
         self.pt = None
         self.label.setFocus()
         self.label1.setText("")
+        self.postcode = ''
         self.update()
 
     def set_layer(self, l):
@@ -110,8 +122,9 @@ class Map(QMainWindow):
             toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             toponym_coodrinates = toponym["Point"]["pos"].split()
             toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+            self.postcode = toponym["metaDataProperty"]["GeocoderMetaData"]['Address']['postal_code']
             if self.color_group_1.checkedButton().text() == 'Вкл':
-                a = toponym["metaDataProperty"]["GeocoderMetaData"]['Address']['postal_code']
+                a = self.postcode
                 self.label1.setText(f'{toponym_address}, {a}')
             else:
                 self.label1.setText(toponym_address)
