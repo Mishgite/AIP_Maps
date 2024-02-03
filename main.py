@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QComboBox
+from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QComboBox, QLineEdit, QPushButton
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from map_scale_utils import get_scale_params
 import requests
 import os
 
-coordinates = ['37.541776', '55.706857']
+
 base_url = 'https://static-maps.yandex.ru/1.x/'
 
 
@@ -31,6 +31,7 @@ class Map(QMainWindow):
         self.z = 15
         self.l = 'map'
         self.degr = 0.005
+        self.coordinates = ['37.541776', '55.706857']
 
         self.label = QLabel(self)
         self.label.resize(600, 450)
@@ -40,9 +41,16 @@ class Map(QMainWindow):
         self.combo.setGeometry(520, 10, 70, 20)
         self.combo.addItems(['схема', 'спутник', 'гибрид'])
         self.combo.currentTextChanged.connect(self.set_layer)
+        self.coordinates_input = QLineEdit(self)
+        self.coordinates_input.setGeometry(10, 10, 80, 20)
+
+        self.btn = QPushButton('Искать', self)
+        self.btn.resize(self.btn.sizeHint())
+        self.btn.setGeometry(90, 10, 80, 20)
+        self.btn.clicked.connect(self.coordinates_place)
 
     def update(self):
-        params = get_scale_params(coordinates[0], coordinates[1], self.z, self.l)
+        params = get_scale_params(self.coordinates[0], self.coordinates[1], self.z, self.l)
         file = request_image(**params)
         pixmap = QtGui.QPixmap(file)
         os.remove(file)
@@ -58,6 +66,15 @@ class Map(QMainWindow):
         self.label.setFocus()
         self.update()
 
+    def coordinates_place(self):
+        if self.coordinates_input.text() != '':
+            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={self.coordinates_input.text()}&format=json"
+            response = requests.get(geocoder_request)
+            json_response = response.json()
+            toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+            toponym_coodrinates = toponym["Point"]["pos"].split()
+            print(toponym_coodrinates)
+            self.coordinates = toponym_coodrinates
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
@@ -69,21 +86,21 @@ class Map(QMainWindow):
                 self.z -= 1
                 self.degr *= 2.5
         elif event.key() == Qt.Key_Left:
-            cord = float(coordinates[0])
+            cord = float(self.coordinates[0])
             cord -= self.degr
-            coordinates[0] = str(cord)
+            self.coordinates[0] = str(cord)
         elif event.key() == Qt.Key_Right:
-            cord = float(coordinates[0])
+            cord = float(self.coordinates[0])
             cord += self.degr
-            coordinates[0] = str(cord)
+            self.coordinates[0] = str(cord)
         elif event.key() == Qt.Key_Up:
-            cord = float(coordinates[1])
+            cord = float(self.coordinates[1])
             cord += self.degr
-            coordinates[1] = str(cord)
+            self.coordinates[1] = str(cord)
         elif event.key() == Qt.Key_Down:
-            cord = float(coordinates[1])
+            cord = float(self.coordinates[1])
             cord -= self.degr
-            coordinates[1] = str(cord)
+            self.coordinates[1] = str(cord)
 
         self.update()
 
