@@ -41,6 +41,15 @@ class Map(QMainWindow):
         os.remove(file)
         self.label.setPixmap(pixmap)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            if self.z != 21:
+                self.z += 1
+        if event.key() == Qt.Key_PageDown:
+            if self.z != 1:
+                self.z -= 1
+        self.update()
+
 
 if __name__ == '__main__':
     import sys
