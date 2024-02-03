@@ -68,6 +68,7 @@ class Map(QMainWindow):
             cord = float(coordinates[1])
             cord -= self.degr
             coordinates[1] = str(cord)
+
         self.update()
 
 
