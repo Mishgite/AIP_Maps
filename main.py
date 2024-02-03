@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication
 from PyQt5.QtGui import QPixmap
-from map_scale_utils import get_scale_params, get_delta
+from map_scale_utils import get_scale_params
 import requests
 import os
 
