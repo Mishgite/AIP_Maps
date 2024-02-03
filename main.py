@@ -50,6 +50,12 @@ class Map(QMainWindow):
         self.btn.setGeometry(90, 10, 80, 20)
         self.btn.clicked.connect(self.coordinates_place)
 
+        self.clear = QPushButton('Сброс поискового результата', self)
+        self.clear.move(175, 10)
+        self.clear.resize(self.clear.sizeHint())
+        self.clear.setFixedHeight(20)
+        self.clear.clicked.connect(self.clear_pos)
+
         self.label.setFocus()
 
     def update(self):
@@ -58,6 +64,11 @@ class Map(QMainWindow):
         pixmap = QtGui.QPixmap(file)
         os.remove(file)
         self.label.setPixmap(pixmap)
+
+    def clear_pos(self):
+        self.pt = None
+        self.label.setFocus()
+        self.update()
 
     def set_layer(self, l):
         if l == 'схема':
