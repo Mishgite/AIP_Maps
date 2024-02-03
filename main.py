@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication
-from PyQt5.QtGui import QPixmap
+from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 from map_scale_utils import get_scale_params
 import requests
 import os
@@ -31,10 +32,12 @@ class Map(QMainWindow):
 
         self.label = QLabel(self)
         self.label.resize(600, 450)
+        self.update()
 
-        params = get_scale_params(coordinates[0], coordinates[1])
+    def update(self):
+        params = get_scale_params(coordinates[0], coordinates[1], self.z)
         file = request_image(**params)
-        pixmap = QPixmap(file)
+        pixmap = QtGui.QPixmap(file)
         os.remove(file)
         self.label.setPixmap(pixmap)
 
