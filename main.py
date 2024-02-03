@@ -56,6 +56,11 @@ class Map(QMainWindow):
         self.clear.setFixedHeight(20)
         self.clear.clicked.connect(self.clear_pos)
 
+        self.label1 = QLabel(self)
+        self.label1.setText("")
+        self.label1.move(10, 30)
+        self.label1.resize(300, 10)
+
         self.label.setFocus()
 
     def update(self):
@@ -87,6 +92,8 @@ class Map(QMainWindow):
             json_response = response.json()
             toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             toponym_coodrinates = toponym["Point"]["pos"].split()
+            toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+            self.label1.setText(toponym_address)
             self.coordinates = toponym_coodrinates
             self.pt = self.coordinates[:]
         self.label.setFocus()
