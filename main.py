@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt
 from map_scale_utils import get_scale_params
 import requests
 import os
-import math
 
 coordinates = ['37.541776', '55.706857']
 base_url = 'https://static-maps.yandex.ru/1.x/'
@@ -56,6 +55,7 @@ class Map(QMainWindow):
             self.l = 'sat'
         if l == 'гибрид':
             self.l = 'skl'
+        self.label.setFocus()
         self.update()
 
 
