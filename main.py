@@ -73,6 +73,7 @@ class Map(QMainWindow):
     def clear_pos(self):
         self.pt = None
         self.label.setFocus()
+        self.label1.setText("")
         self.update()
 
     def set_layer(self, l):
