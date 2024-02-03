@@ -59,7 +59,7 @@ class Map(QMainWindow):
         self.label1 = QLabel(self)
         self.label1.setText("")
         self.label1.move(10, 30)
-        self.label1.resize(300, 10)
+        self.label1.resize(590, 10)
 
         self.label.setFocus()
 
