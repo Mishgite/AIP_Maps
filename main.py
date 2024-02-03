@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication
+from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QComboBox
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from map_scale_utils import get_scale_params
@@ -30,18 +30,34 @@ class Map(QMainWindow):
         self.setGeometry(300, 300, 600, 450)
         self.setWindowTitle('Карта')
         self.z = 15
+        self.l = 'map'
         self.degr = 0.005
 
         self.label = QLabel(self)
         self.label.resize(600, 450)
         self.update()
 
+        self.combo = QComboBox(self)
+        self.combo.setGeometry(520, 10, 70, 20)
+        self.combo.addItems(['схема', 'спутник', 'гибрид'])
+        self.combo.currentTextChanged.connect(self.set_layer)
+
     def update(self):
-        params = get_scale_params(coordinates[0], coordinates[1], self.z)
+        params = get_scale_params(coordinates[0], coordinates[1], self.z, self.l)
         file = request_image(**params)
         pixmap = QtGui.QPixmap(file)
         os.remove(file)
         self.label.setPixmap(pixmap)
+
+    def set_layer(self, l):
+        if l == 'схема':
+            self.l = 'map'
+        if l == 'спутник':
+            self.l = 'sat'
+        if l == 'гибрид':
+            self.l = 'skl'
+        self.update()
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
