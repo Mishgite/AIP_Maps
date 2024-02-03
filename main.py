@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QComboBox, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QComboBox, QLineEdit, QPushButton, QRadioButton, QButtonGroup
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from map_scale_utils import get_scale_params
@@ -61,6 +61,22 @@ class Map(QMainWindow):
         self.label1.move(10, 30)
         self.label1.resize(590, 10)
 
+        self.label2 = QLabel(self)
+        self.label2.setText("приписывание почтового индекса")
+        self.label2.move(10, 40)
+        self.label2.resize(590, 10)
+
+        self.text = QRadioButton('Вкл', self)
+        self.text.setChecked(True)
+        self.text.move(10, 50)
+
+        self.text1 = QRadioButton('Выкл', self)
+        self.text1.move(10, 70)
+
+        self.color_group_1 = QButtonGroup(self)
+        self.color_group_1.addButton(self.text)
+        self.color_group_1.addButton(self.text1)
+
         self.label.setFocus()
 
     def update(self):
@@ -94,9 +110,14 @@ class Map(QMainWindow):
             toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             toponym_coodrinates = toponym["Point"]["pos"].split()
             toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
-            self.label1.setText(toponym_address)
+            if self.color_group_1.checkedButton().text() == 'Вкл':
+                a = toponym["metaDataProperty"]["GeocoderMetaData"]['Address']['postal_code']
+                self.label1.setText(f'{toponym_address}, {a}')
+            else:
+                self.label1.setText(toponym_address)
             self.coordinates = toponym_coodrinates
             self.pt = self.coordinates[:]
+            print(toponym_address)
         self.label.setFocus()
         self.update()
 
