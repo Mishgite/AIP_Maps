@@ -30,6 +30,7 @@ class Map(QMainWindow):
         self.setWindowTitle('Карта')
         self.z = 15
         self.l = 'map'
+        self.pt = None
         self.degr = 0.005
         self.coordinates = ['37.541776', '55.706857']
 
@@ -49,8 +50,10 @@ class Map(QMainWindow):
         self.btn.setGeometry(90, 10, 80, 20)
         self.btn.clicked.connect(self.coordinates_place)
 
+        self.label.setFocus()
+
     def update(self):
-        params = get_scale_params(self.coordinates[0], self.coordinates[1], self.z, self.l)
+        params = get_scale_params(self.coordinates[0], self.coordinates[1], self.z, self.l, self.pt)
         file = request_image(**params)
         pixmap = QtGui.QPixmap(file)
         os.remove(file)
@@ -74,6 +77,8 @@ class Map(QMainWindow):
             toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             toponym_coodrinates = toponym["Point"]["pos"].split()
             self.coordinates = toponym_coodrinates
+            self.pt = self.coordinates[:]
+        self.label.setFocus()
         self.update()
 
     def keyPressEvent(self, event):
