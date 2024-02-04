@@ -29,10 +29,10 @@ class Map(QMainWindow):
         super().__init__()
         self.setGeometry(300, 300, 600, 450)
         self.setWindowTitle('Карта')
-        self.z = 15
+        self.delta = 0.004
+        self.degr = self.delta / 2
         self.l = 'map'
         self.pt = None
-        self.degr = 0.005
         self.postcode = ''
         self.coordinates = ['37.541776', '55.706857']
 
@@ -83,7 +83,9 @@ class Map(QMainWindow):
         self.label.setFocus()
 
     def update(self):
-        params = get_scale_params(self.coordinates[0], self.coordinates[1], self.z, self.l, self.pt)
+        params = get_scale_params(
+            self.coordinates[0], self.coordinates[1], self.delta, self.delta * 0.75, self.l, self.pt
+        )
         file = request_image(**params)
         pixmap = QtGui.QPixmap(file)
         os.remove(file)
@@ -136,13 +138,11 @@ class Map(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
-            if self.z != 21:
-                self.z += 1
-                self.degr /= 2.5
+            self.delta /= 2
+            self.degr /= 2
         elif event.key() == Qt.Key_PageDown:
-            if self.z != 1:
-                self.z -= 1
-                self.degr *= 2.5
+            self.delta *= 2
+            self.degr *= 2
         elif event.key() == Qt.Key_Left:
             cord = float(self.coordinates[0])
             cord -= self.degr

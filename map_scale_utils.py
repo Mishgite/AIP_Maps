@@ -1,8 +1,9 @@
-def get_scale_params(object_longitude, object_latitude, z, l, pt=None):
+def get_scale_params(object_longitude, object_latitude, delta1, delta2, l, pt=None):
     ll = f"{object_longitude},{object_latitude}"
+    spn = f"{delta1},{delta2}"
     dct = {
         'll': ll,
-        'z': z,
+        'spn': spn,
         'l': l,
     }
 
