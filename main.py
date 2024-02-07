@@ -162,6 +162,10 @@ class Map(QMainWindow):
 
         self.update()
 
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            print(f"Координаты:{event.x()}, {event.y()}")
+
 
 if __name__ == '__main__':
     import sys
