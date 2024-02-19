@@ -120,20 +120,23 @@ class Map(QMainWindow):
         if self.coordinates_input.text() != '':
             geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={self.coordinates_input.text()}&format=json"
             response = requests.get(geocoder_request)
-            json_response = response.json()
-            toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
-            toponym_coodrinates = toponym["Point"]["pos"].split()
-            toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
-            self.postcode = toponym["metaDataProperty"]["GeocoderMetaData"]['Address']['postal_code']
-            if self.color_group_1.checkedButton().text() == 'Вкл':
-                a = self.postcode
-                self.label1.setText(f'{toponym_address}, {a}')
+            if response:
+                json_response = response.json()
+                toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+                toponym_coodrinates = toponym["Point"]["pos"].split()
+                toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+                self.postcode = toponym["metaDataProperty"]["GeocoderMetaData"]['Address']['postal_code']
+                if self.color_group_1.checkedButton().text() == 'Вкл':
+                    a = self.postcode
+                    self.label1.setText(f'{toponym_address}, {a}')
+                else:
+                    self.label1.setText(toponym_address)
+                self.coordinates = toponym_coodrinates
+                self.pt = self.coordinates[:]
+                print(toponym_address)
+                self.label.setFocus()
             else:
-                self.label1.setText(toponym_address)
-            self.coordinates = toponym_coodrinates
-            self.pt = self.coordinates[:]
-            print(toponym_address)
-        self.label.setFocus()
+                self.label1.setText('Неправильный формат запроса')
         self.update()
 
     def keyPressEvent(self, event):
