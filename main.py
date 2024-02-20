@@ -118,9 +118,9 @@ class Map(QMainWindow):
 
     def coordinates_place(self):
         if self.coordinates_input.text() != '':
-            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={self.coordinates_input.text()}&format=json"
-            response = requests.get(geocoder_request)
-            if response:
+            if not elf.coordinates_input.text().isdigit():
+                geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={self.coordinates_input.text()}&format=json"
+                response = requests.get(geocoder_request)
                 json_response = response.json()
                 toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
                 toponym_coodrinates = toponym["Point"]["pos"].split()
